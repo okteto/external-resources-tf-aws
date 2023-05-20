@@ -74,7 +74,7 @@ external:
     notes: README.md
     endpoints:
     - name: readme
-      url: https://github.com/okteto/external-resources-aws
+      url: https://github.com/okteto/external-resources-tf-aws
   sqs:
     icon: aws
     notes: sqs/notes.md

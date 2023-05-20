@@ -28,7 +28,7 @@ Once this is configured, anyone with access to your Okteto instance will be able
 
 
 ```
-$ git clone https://github.com/okteto/external-resources-aws
+$ git clone https://github.com/okteto/external-resources-tf-aws
 $ cd external-resources-aws
 $ okteto context use $OKTETO_URL
 $ okteto deploy
