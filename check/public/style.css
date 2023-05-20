@@ -1,0 +1,249 @@
+:root {
+  --pink: #FE38C9;
+  --yellow: #FAFF00;
+  --blue: #00C4F5;
+  --purple: #120924;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--purple);
+  font-family: 'Roboto', sans-serif;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 5em;
+  padding: 6em 0 0 0;
+}
+
+.logo {
+  width: 12em;
+  margin-top: -3em;
+  margin-bottom: 5em;
+  padding: 0 2em;
+  background: var(--purple);
+}
+
+.page-container {
+  box-shadow: 0px 0px 6px var(--pink);
+  border: 4px var(--pink) solid;
+  border-radius: 30px;
+  width: calc(100% - 4em);
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding-bottom: 8em;
+}
+
+h2 {
+  paint-order: stroke fill;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 4em;
+  letter-spacing: 0.305em;
+  color: var(--yellow);
+  text-shadow: -4px -3px 0px var(--pink);
+  transform: rotate(-4.4deg);
+  -webkit-text-stroke: 2px var(--pink);
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 0.5em;
+}
+
+.menu-input {
+  background: transparent;
+  border: 2px var(--blue) solid;
+  border-radius: 10px;
+  font-size: 2em;
+  width: 100%;
+  padding: 0.25em 2em 0.25em 0.25em;
+  color: var(--blue);
+}
+
+.menu-input::placeholder {
+  color: var(--blue);
+  opacity: 0.7;
+}
+
+.button-order {
+  appearance: none;
+  border: 0;
+  background: var(--pink);
+  font-size: 2em;
+  color: var(--purple);
+  font-weight: 600;
+  padding: 0.5em 1em;
+  border-radius: 10px;
+  position: absolute;
+  bottom: -1.15em;
+  box-shadow: 0px 0px 0 40px #120924;
+}
+
+.button-order:hover {
+  background: var(--yellow);
+}
+
+.food {
+  list-style: none;
+  padding: 0;
+  font-size: 2em;
+  color: var(--blue);
+  width: 90%;
+  max-width: 700px;
+  margin-top: 0.25em;
+  margin-bottom: 2.5em;
+}
+
+.food li {
+  position: relative;
+  padding: 0.5em 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px dotted var(--blue);
+}
+
+.button-add {
+  appearance: none;
+  background: none;
+  border: 0;
+  color: var(--blue);
+  position: absolute;
+  top: 0.6em;
+  right: 0.6em;
+  width: 3em;
+  height: 3em;
+  transition: color 150ms ease;
+}
+
+.button-add:hover {
+  color: var(--pink)
+}
+
+.button-add svg {
+  width: 100%;
+  height: auto;
+}
+
+.button-remove,
+.button-download {
+  appearance: none;
+  background: none;
+  border: 0;
+  color: var(--blue);
+  width: 2em;
+  height: 2em;
+  transition: color 200ms ease;
+}
+
+.button-remove:hover,
+.button-download:hover {
+  color: var(--pink)
+}
+
+.button-remove svg,
+.button-download svg {
+  width: 100%;
+  height: auto;
+}
+
+.order-input {
+  position: relative;
+  width: 90%;
+  max-width: 800px;
+  display: flex;
+  justify-content: center;
+}
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(10px);
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  background: #12092490;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity ease 150ms;
+}
+
+.modal-open {
+  opacity: 1;
+  pointer-events: initial;
+}
+
+.modal-open .modal-content {
+  transition: transform 150ms ease-in, opacity 150ms ease-in;
+  transition-delay: 100ms;
+  transform: translateY(-10px);
+  opacity: 1;
+}
+
+.modal-content {
+  opacity: 0;
+  padding: 2em;
+  border: 4px var(--blue) solid;
+  border-radius: 30px;
+  color: var(--blue);
+  font-size: 2em;
+  background: #12092490;
+}
+
+.order-again-button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  font-size: 1em;
+  color: currentColor;
+  display: inline-block;
+  text-decoration: underline;
+  transition: color 150ms ease;
+}
+
+.order-again-button:hover {
+  color: var(--pink);
+}
+
+.page-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+  align-items: center;
+  justify-content: flex-end;
+  color: rgba(255, 255, 255, 0.5);
+  padding-bottom: 3em;
+}
+
+dl {
+  font-size: 0.75em;
+  text-transform: uppercase;
+}
+
+dt {
+  font-weight: bold;
+}
+
+dd + dt {
+  margin-top: 0.5em;
+}
+
+.download-link {
+  color: var(--pink);
+  font-size: 0.65em;
+}
+
+.download-link:hover {
+  text-decoration: none;
+}

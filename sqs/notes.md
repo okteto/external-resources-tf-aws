@@ -1,0 +1,3 @@
+Amazon Simple Queue Service (SQS) lets you send, store, and receive messages between software components at any volume, without losing messages or requiring other services to be available. It's a great way to build event-driven applications like this sample! 
+
+Visit https://github.com/okteto/aws to learn more about how to integrate Okteto and all the AWS services together to create a next generation development experience for your entire team.

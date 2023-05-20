@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <!-- Content Type Meta tag -->
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <!--Responsive Viewport Meta tag-->
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+
+		<title>The Oktaco Shop</title>
+
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,900&display=swap" rel="stylesheet">
+
+
+		<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌯</text></svg>">
+		
+		<!-- Stylesheets -->
+		<link rel="stylesheet" type="text/css" href="reset.min.css">
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<div class="page-container">
+
+			<img src="/logo.png" alt="The Oktaco Shop" class="logo" />
+
+			<h2>Order</h2>
+			<div class="order-input">
+				<input type="text" placeholder="Tacos, burritos, churros..." id="item" class="menu-input">
+				<button id="add" class="button-add">
+					<svg width="673" height="673" viewBox="0 0 673 673" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+						<path d="M336.667 0.333374C151.4 0.333374 0.679932 151.053 0.679932 336.307C0.679932 521.587 151.4 672.333 336.667 672.333C521.933 672.333 672.653 521.6 672.653 336.307C672.653 151.04 521.933 0.333374 336.667 0.333374ZM336.667 643.44C167.333 643.44 29.5733 505.68 29.5733 336.307C29.5733 166.987 167.347 29.2267 336.667 29.2267C506 29.2267 643.76 166.973 643.76 336.32C643.76 505.68 506 643.453 336.667 643.453V643.44Z" />
+						<path d="M504.64 321.867H351.107V168.373C351.107 160.379 344.648 153.925 336.664 153.925C328.68 153.925 322.216 160.378 322.216 168.373V321.867H168.736C160.752 321.867 154.288 328.325 154.288 336.309C154.288 344.304 160.752 350.757 168.736 350.757H322.216V504.264C322.216 512.248 328.674 518.712 336.664 518.712C344.648 518.712 351.107 512.248 351.107 504.264V350.757H504.64C512.63 350.757 519.088 344.304 519.088 336.309C519.093 328.325 512.624 321.867 504.645 321.867H504.64Z" />
+					</svg>									
+				</button>
+			</div>
+
+			<ul class="food" id="food"></ul>
+
+			<h2>Email</h2>
+			<div class="order-input">
+				<input type="email" placeholder="cindylopez@okteto.com" id="email" class="menu-input">
+			</div>
+					
+
+			<button id="placeOrder" class="button-order">
+				Order now
+			</button>
+
+		</div>
+
+		<footer class="page-footer">
+			Powered by Okteto & AWS
+
+			<img src="/okteto.svg" alt="Okteto" />
+
+		</footer>
+
+		<div id="orderPlaced" class="modal">
+			<div class="modal-content">
+				Your order has been placed! <button class="order-again-button">Order again</button>
+			</div>
+		</div>
+
+		<!-- JavaScripts -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="main.js"></script>
+	</body>
+</html>

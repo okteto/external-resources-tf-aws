@@ -1,0 +1,47 @@
+replicaCount: 1
+
+image: external-resources-aws-demo-check:latest
+bucket: 
+credentials:
+  secret:
+    name: aws-credentials
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    dev.okteto.com/generate-host: "check"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

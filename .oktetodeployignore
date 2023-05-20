@@ -1,0 +1,4 @@
+.git
+.github
+!.terraform.lock.hcl
+.terraform

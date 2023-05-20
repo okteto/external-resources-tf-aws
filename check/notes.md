@@ -1,0 +1,3 @@
+The Check service is implemented using [FastAPI](https://fastapi.tiangolo.com/), a modern, fast (high-performance), web framework for building APIs with Python based on standard Python type hints. 
+
+This service users [Swagger](https://github.com/swagger-api/swagger-ui) to give you automatic interactive API documentation. You can use this endpoint to try the API using your browser to speed up your development. This works both on "deploy" and "okteto up" mode. 🚀

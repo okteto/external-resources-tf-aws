@@ -1,0 +1,117 @@
+icon: https://raw.githubusercontent.com/okteto/icons/main/oktaco.png
+
+build:
+  menu:
+    context: menu
+
+  kitchen:
+    context: kitchen
+
+  kitchen-dev:
+    context: kitchen
+    target: dev
+
+  check:
+    context: check
+
+deploy:
+  image: hashicorp/terraform:1.4
+  commands:
+  - name: Create the AWS infrastructure
+    command: |
+      set -xe
+      resourceName="${OKTETO_NAMESPACE}-oktacoshop"
+      region=us-west-2
+
+      terraform init -input=false -backend-config="bucket=${TF_STATE_BUCKET}" -backend-config="key=tf/${OKTETO_NAMESPACE}" -backend-config="region=$region"
+      terraform apply -input=false -var "bucket_name=$resourceName" -var "queue_name=$resourceName" -var "region=$region" -auto-approve
+      
+      s3Dashboard="https://s3.console.aws.amazon.com/s3/buckets/${resourceName}"
+      queueDashboard="https://${region}.console.aws.amazon.com/sqs/v2/home?region=${region}#/queues"
+      queueUrl=$(terraform output -raw queue_url)
+
+      # make the values available to the following steps and the dashboard
+      {
+        echo "OKTETO_EXTERNAL_S3_ENDPOINTS_BUCKET_URL=$s3Dashboard"
+        echo "S3_BUCKET_NAME=$resourceName"
+        echo "OKTETO_EXTERNAL_SQS_ENDPOINTS_QUEUE_URL=$queueDashboard"
+        echo "SQS_QUEUE_URL=$queueUrl"
+        echo "SQS_QUEUE_NAME=$resourceName"
+      } >> "$OKTETO_ENV"
+  
+  # only run this command if you are not using Roles
+  - name: Create the AWS secret
+    command: |
+      kubectl create secret generic aws-credentials --save-config --dry-run=client --from-literal=AWS_REGION=$AWS_REGION --from-literal=AWS_DEFAULT_REGION=$AWS_REGION --from-literal=AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --from-literal=AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -o yaml | kubectl apply -f -
+
+  - name: Deploy the Menu microservice
+    command: |
+      helm upgrade --install menu menu/chart --set image=$OKTETO_BUILD_MENU_IMAGE --set queue=$SQS_QUEUE_URL --set author="${OKTETO_NAMESPACE}-${OKTETO_USERNAME}"
+
+  - name: Deploy the Kitchen microservice
+    command: helm upgrade --install kitchen kitchen/chart --set image=$OKTETO_BUILD_KITCHEN_IMAGE --set queue=$SQS_QUEUE_NAME --set check=https://check-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}/checks
+
+  - name: Deploy the Check microservice
+    command: |
+     helm upgrade --install check check/chart --set image=${OKTETO_BUILD_CHECK_IMAGE} --set bucket="$S3_BUCKET_NAME"
+     echo "OKTETO_EXTERNAL_API_DOCS_ENDPOINTS_DOCS_URL=https://check-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}/docs" >> $OKTETO_ENV
+
+destroy:
+  image: hashicorp/terraform:1.4
+  commands:
+  - name: Delete the AWS infrastructure
+    command: |
+      terraform init -input=false
+      resourceName="${OKTETO_NAMESPACE}-oktacoshop"
+      region=us-west-2
+
+      terraform init -input=false -backend-config="bucket=${TF_STATE_BUCKET}" -backend-config="key=tf/${OKTETO_NAMESPACE}" -backend-config="region=$region"
+      terraform apply -input=false -var "bucket_name=$resourceName" -var "queue_name=$resourceName" -var "region=$region" -auto-approve --destroy
+
+external:
+  readme:
+    icon: okteto
+    notes: README.md
+    endpoints:
+    - name: readme
+      url: https://github.com/okteto/external-resources-aws
+  sqs:
+    icon: aws
+    notes: sqs/notes.md
+    endpoints:
+    - name: queue
+  s3:
+    icon: aws
+    notes: s3/notes.md
+    endpoints:
+    - name: bucket
+
+  api-docs:
+    icon: dashboard
+    notes: check/notes.md
+    endpoints:
+    - name: docs
+
+dev:
+  menu:
+    command: bash
+    sync:
+    - menu:/usr/src/app
+    forward:
+    - 9229:9229
+  
+  kitchen:
+    image: ${OKTETO_BUILD_KITCHEN_DEV_IMAGE}
+    command: bash
+    sync:
+    - kitchen:/usr/src/app
+    environment:
+     GIN_MODE: debug
+  
+  check:
+    command: bash
+    sync:
+    - check:/usr/src/app
+    environment:
+     RELOAD: true
+
