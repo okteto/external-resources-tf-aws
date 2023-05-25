@@ -23,7 +23,7 @@ deploy:
       resourceName="${OKTETO_NAMESPACE}-oktacoshop"
       region=us-west-2
 
-      terraform init -input=false -backend-config="bucket=${TF_STATE_BUCKET}" -backend-config="key=tf/${OKTETO_NAMESPACE}" -backend-config="region=$region"
+      terraform init -input=false
       terraform apply -input=false -var "bucket_name=$resourceName" -var "queue_name=$resourceName" -var "region=$region" -auto-approve
       
       s3Dashboard="https://s3.console.aws.amazon.com/s3/buckets/${resourceName}"
@@ -65,7 +65,7 @@ destroy:
       resourceName="${OKTETO_NAMESPACE}-oktacoshop"
       region=us-west-2
 
-      terraform init -input=false -backend-config="bucket=${TF_STATE_BUCKET}" -backend-config="key=tf/${OKTETO_NAMESPACE}" -backend-config="region=$region"
+      terraform init
       terraform apply -input=false -var "bucket_name=$resourceName" -var "queue_name=$resourceName" -var "region=$region" -auto-approve --destroy
 
 external:
