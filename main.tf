@@ -6,7 +6,10 @@ terraform {
     }
   }
 
-  backend "s3" {}
+  backend "kubernetes" {
+    secret_suffix    = "tf_state"
+  }
+  
   required_version = ">= 1.2.0"
 }
 
