@@ -19,7 +19,7 @@ deploy:
   commands:
   - name: Create the AWS infrastructure
     command: |
-      set -xe
+      set -e
       resourceName="${OKTETO_NAMESPACE}-oktacoshop"
       region=us-west-2
       
