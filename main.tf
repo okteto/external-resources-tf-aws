@@ -7,7 +7,7 @@ terraform {
   }
 
   backend "kubernetes" {
-    secret_suffix    = "tf_state"
+    secret_suffix    = "okteto"
   }
   
   required_version = ">= 1.2.0"
