@@ -12,14 +12,12 @@ This is an example of how to configure and deploy a development environment that
 1. Okteto CLI 2.14 or newer
 1. An AWS account
 1. An Okteto account ([Sign-up](https://www.okteto.com/try-free/) for 30 day, self-hosted free trial)
-3. Create a set of IAM keys for your AWS account (If you are using Okteto Self-Hosted, you can directly assign an AWS Role)
-4. An S3 bucket to store the terraform state
-5. Create the following Okteto secrets:
+1. Create a set of IAM keys for your AWS account (If you are using Okteto Self-Hosted, you can directly assign an AWS Role)
+1. Create the following Okteto secrets:
 
         AWS_ACCESS_KEY_ID: The Acces Key ID of your IAM user
         AWS_SECRET_ACCESS_KEY: The Secret Acces Key of your IAM user
         AWS_REGION: The region in AWS you would like to use for the external resources
-        TF_STATE_BUCKET: The bucket that will store the terraform state
 
 
 > If you are using Okteto Self-Hosted, you can configure your instance to use an AWS role instead of using an Acess Key and Secret Access Key.

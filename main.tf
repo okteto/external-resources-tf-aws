@@ -6,7 +6,10 @@ terraform {
     }
   }
 
-  backend "s3" {}
+  backend "kubernetes" {
+    secret_suffix    = "okteto"
+  }
+  
   required_version = ">= 1.2.0"
 }
 
