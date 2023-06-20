@@ -63,11 +63,13 @@ destroy:
   commands:
   - name: Delete the AWS infrastructure
     command: |
-      terraform init -input=false
+      set -e
       resourceName="${OKTETO_NAMESPACE}-oktacoshop"
       region=us-west-2
-
-      terraform init
+      
+      export KUBE_CONFIG_PATH="$KUBECONFIG"
+      export KUBE_NAMESPACE=$OKTETO_NAMESPACE
+      terraform init -input=false
       terraform apply -input=false -var "bucket_name=$resourceName" -var "queue_name=$resourceName" -var "region=$region" -auto-approve --destroy
 
 external:
