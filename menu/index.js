@@ -1,4 +1,5 @@
 const express = require('express')
+const os = require('os')
 const { SQSClient, SendMessageCommand } = require("@aws-sdk/client-sqs");
 const sqsClient = new SQSClient({region: process.env.REGION});
 const author = process.env.AUTHOR;
@@ -9,7 +10,10 @@ app.use(express.json());
 app.use(express.static('public'))
 
 app.get('/healthz', function (req, res) {
-  res.sendStatus(200);
+  res.json({
+    "status": "200",
+    "hostname": os.hostname()
+  })
 })
 
 app.post('/order', function (req, res) {
