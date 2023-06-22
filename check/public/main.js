@@ -36,7 +36,9 @@ fetch("/checks",{
     }
   }).catch(error => { 
     console.log(error)
-  })
+  }).finally(() => {
+    setTimeout(renderChecks(), 5*1000);
+  });
 }
 
 function removeItem() {
@@ -100,3 +102,4 @@ function addItemToDOM(checkId, total, items, url) {
 
   list.insertBefore(item, list.childNodes[0]);
 }
+
