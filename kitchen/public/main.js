@@ -81,7 +81,7 @@ function getOrders() {
     })
     .finally(()=> {
       timeout = 1000 * backoff;
-      setTimeout(timeout, getOrders());
+      setTimeout(getOrders, timeout);
     });
 }
 
