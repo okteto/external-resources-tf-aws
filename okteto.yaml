@@ -21,7 +21,7 @@ deploy:
     command: |
       set -e
       resourceName="${OKTETO_NAMESPACE}-oktacoshop"
-      region=us-west-2
+      region=$AWS_REGION
       
       export KUBE_CONFIG_PATH="$KUBECONFIG"
       export KUBE_NAMESPACE=$OKTETO_NAMESPACE
@@ -65,7 +65,7 @@ destroy:
     command: |
       set -e
       resourceName="${OKTETO_NAMESPACE}-oktacoshop"
-      region=us-west-2
+      region=$AWS_REGION
       
       export KUBE_CONFIG_PATH="$KUBECONFIG"
       export KUBE_NAMESPACE=$OKTETO_NAMESPACE
