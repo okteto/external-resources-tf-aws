@@ -19,8 +19,12 @@ This is an example of how to configure and deploy a development environment that
         AWS_SECRET_ACCESS_KEY: The Secret Acces Key of your IAM user
         AWS_REGION: The region in AWS you would like to use for the external resources
 
+Make sure this AWS user has permissions to create, read from, and delete the following AWS services:
 
-> If you are using Okteto Self-Hosted, you can configure your instance to use an AWS role instead of using an Acess Key and Secret Access Key.
+- SQS Queues
+- S3 Buckets
+
+> Alternatively if you are using Okteto Self-Hosted, you can configure your instance to use an AWS role instead of using an Acess Key and Secret Access Key.
 
 Once this is configured, anyone with access to your Okteto instance will be able to deploy an development environment automatically, including the required cloud infrastructure.
 
