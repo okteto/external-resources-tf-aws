@@ -59,3 +59,5 @@ $ okteto up check
 This isn't an example of a properly architected perfectly designed distributed app... it's a simple
 example of the various types of pieces and languages you might see (queues, persistent data, etc), and how to
 deal with them in Okteto.
+
+Happy coding!
