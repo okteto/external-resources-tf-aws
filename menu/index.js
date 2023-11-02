@@ -23,7 +23,7 @@ var templateValues = {
 
 // WARNING: Only remove the comments if you believe that pizzas are better than tacos
 /* templateValues = {
-    title: "TThe Okpizza Shop",
+    title: "The Okpizza Shop",
     logo: "/okpizza.png",
     placeholder: "Thin slice, neapolitan, deep dish...",
     emoji: "🍕"
