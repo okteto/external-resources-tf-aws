@@ -4,22 +4,29 @@ import tempfile
 import jinja2
 import uvicorn
 
+from datetime import datetime
+
 from botocore.exceptions import ClientError
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
-
 from pydantic import BaseModel
+from pymongo import MongoClient
 from typing import List
 
 
 app = FastAPI()
 env = jinja2.Environment(loader=jinja2.PackageLoader("main"), autoescape=jinja2.select_autoescape())
-template = env.get_template("receipt.j2")
+receipt_template = env.get_template("receipt.j2")
+ledger_template = env.get_template("ledger.html")
 
 s3 = boto3.client('s3')
 s3Bucket = os.getenv("BUCKET")
 checks = {}
+
+client = MongoClient("mongodb://mongodb:27017/")
+db = client["oktaco"]
+ledger = db["ledger"]
 
 
 class Item(BaseModel):
@@ -32,7 +39,7 @@ class Check(BaseModel):
     items: List[Item]
     total: float | None = 0
     url: str | None = ""
-
+    date: str | None = ""
 
 def upload_receipt(orderId: str, receipt: str):
     
@@ -71,7 +78,7 @@ async def prepare_check(check: Check):
         total += price
 
     check.total = total
-    receipt = template.render(total=check.total, items=check.items, check_id=check.orderId)
+    receipt = receipt_template.render(total=check.total, items=check.items, check_id=check.orderId)
     check.url = upload_receipt(check.orderId, receipt)
     checks[check.orderId] = check
     print(("The total for check {check_id} is: ${total} 🧮").format(check_id=check.orderId, total=check.total))
@@ -99,13 +106,24 @@ async def getReceipt(check_id):
 @app.delete("/checks/{check_id}")
 async def payCheck(check_id):
     if check_id in checks.keys():
+        check = checks[check_id]
+        check.date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        new_ledger_item = check.dict()
+        ledger.insert_one(new_ledger_item)
         del checks[check_id]
         return
     
     raise HTTPException(status_code=404, detail="Check not found 👎🏼")
 
+@app.get("/ledger", response_model=list[Check])
+async def getLedger():
+    ledger_cursor = ledger.find({})
+    ledger_list = [Check(orderId=str(item['orderId']), total=item['total'], url=item['url'], date=item.get('date', ''), items=item['items']) for item in ledger_cursor]
+    ledger_html = ledger_template.render(items=ledger_list)
+    return HTMLResponse(content=ledger_html)
+
 app.mount("/", StaticFiles(directory="public", html=True), name="public")
 
 if __name__ == "__main__":
    reload=bool(os.getenv("RELOAD"))
-   uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=reload)
+   uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=reload, reload_dirs="./templates")

@@ -46,6 +46,10 @@ deploy:
     command: |
       kubectl create secret generic aws-credentials --save-config --dry-run=client --from-literal=AWS_REGION=$AWS_REGION --from-literal=AWS_DEFAULT_REGION=$AWS_REGION --from-literal=AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --from-literal=AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -o yaml | kubectl apply -f -
 
+  - name: Deploy MongoDB in the cluster
+    command: |
+      helm upgrade --install mongodb oci://registry-1.docker.io/bitnamicharts/mongodb -f mongodb/values.yaml
+      
   - name: Deploy the Menu microservice
     command: |
       helm upgrade --install menu menu/chart --set image=$OKTETO_BUILD_MENU_IMAGE --set queue=$SQS_QUEUE_URL --set author="${OKTETO_NAMESPACE}-${OKTETO_USERNAME}"
