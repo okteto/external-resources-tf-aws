@@ -1,11 +1,11 @@
 # file: .github/workflows/preview.yaml
-on:
-  pull_request:
-    branches:
-      - main
-
+on: 
+  issue_comment:
+    types: [created, edited]
+    
 jobs:
-  preview:
+  preview_on_pr:
+    if: ${{ (github.event.issue.pull_request) && contains(github.event.comment.body, '/preview') }}
     runs-on: ubuntu-latest
     steps:
     - name: Context
