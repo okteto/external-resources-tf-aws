@@ -16,7 +16,7 @@ app.use(express.static('public'))
 // the values for the template
 var templateValues = {
     title: "The Oktaco Shop",
-    logo: "/logo.png",
+    logo: "/oktaco.png",
     placeholder: "Tacos, burritos, churros...",
     emoji: "🌯"
 };
