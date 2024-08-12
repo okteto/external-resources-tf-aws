@@ -32,14 +32,7 @@ deploy:
       queueDashboard="https://${region}.console.aws.amazon.com/sqs/v2/home?region=${region}#/queues"
       queueUrl=$(terraform output -raw queue_url)
 
-      # make the values available to the following steps and the dashboard
-      {
-        echo "OKTETO_EXTERNAL_S3_ENDPOINTS_BUCKET_URL=$s3Dashboard"
-        echo "S3_BUCKET_NAME=$resourceName"
-        echo "OKTETO_EXTERNAL_SQS_ENDPOINTS_QUEUE_URL=$queueDashboard"
-        echo "SQS_QUEUE_URL=$queueUrl"
-        echo "SQS_QUEUE_NAME=$resourceName"
-      } >> "$OKTETO_ENV"
+      
   
   # only run this command if you are not using Roles
   - name: Create the AWS secret
@@ -56,7 +49,6 @@ deploy:
   - name: Deploy the Check microservice
     command: |
      helm upgrade --install check check/chart --set image=${OKTETO_BUILD_CHECK_IMAGE} --set bucket="$S3_BUCKET_NAME"
-     echo "OKTETO_EXTERNAL_API_DOCS_ENDPOINTS_DOCS_URL=https://check-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}/docs" >> $OKTETO_ENV
 
 destroy:
   image: hashicorp/terraform:1.4
@@ -84,17 +76,20 @@ external:
     notes: sqs/notes.md
     endpoints:
     - name: queue
+      url: http://example.com
   s3:
     icon: aws
     notes: s3/notes.md
     endpoints:
     - name: bucket
+      url: http://example.com
 
   api-docs:
     icon: dashboard
     notes: check/notes.md
     endpoints:
     - name: docs
+      url: http://example.com
 
 dev:
   menu:
