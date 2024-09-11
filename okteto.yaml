@@ -111,6 +111,12 @@ dev:
     - kitchen:/usr/src/app
     environment:
      GIN_MODE: debug
+    securityContext:
+      capabilities:
+        add:
+          - SYS_PTRACE
+    forward:
+      - 2345:2345
   
   check:
     command: bash

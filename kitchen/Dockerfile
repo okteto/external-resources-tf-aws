@@ -1,7 +1,7 @@
-FROM golang:buster as dev
+FROM golang:1.23-bookworm AS dev
 
 WORKDIR /usr/src/app
-RUN go install github.com/codegangsta/gin@latest
+RUN go install github.com/codegangsta/gin@latest && go install github.com/go-delve/delve/cmd/dlv@latest
 COPY go.mod go.sum /usr/src/app/
 RUN go mod tidy
 COPY . . 
