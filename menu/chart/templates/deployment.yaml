@@ -35,13 +35,10 @@ spec:
               containerPort: 3000
               protocol: TCP
           env:
-          - name: AUTHOR
-            value: "{{ .Values.author }}"
+          - name: AWS_REGION
+            value: "{{ .Values.region }}"
           - name: QUEUE
             value: "{{ .Values.queue }}"
-          envFrom:
-          - secretRef:
-              name: {{ .Values.credentials.secret.name }}
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

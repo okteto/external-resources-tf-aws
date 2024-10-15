@@ -2,10 +2,7 @@ replicaCount: 1
 
 image: external-resources-aws-demo-menu:latest
 queue: 
-author: 
-credentials:
-  secret:
-    name: aws-credentials
+region: us-west-2
 
 imagePullSecrets: []
 nameOverride: ""
