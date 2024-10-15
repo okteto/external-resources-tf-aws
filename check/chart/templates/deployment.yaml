@@ -37,10 +37,9 @@ spec:
           env:
           - name: BUCKET
             value: {{ .Values.bucket }}
-          envFrom:
-          - secretRef:
-              name: {{ .Values.credentials.secret.name }}
-
+          - name: AWS_REGION
+            value: "{{ .Values.region }}"
+          
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

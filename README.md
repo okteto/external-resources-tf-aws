@@ -8,23 +8,16 @@ This is an example of how to configure and deploy a development environment that
 
 ## Run the demo application in Okteto
 
-### Prequisites:
+### Prerequisites:
 1. Okteto CLI 2.14 or newer
-1. An AWS account
+1. Access to an AWS account
 1. An Okteto account ([Sign-up](https://www.okteto.com/try-free/) for 30 day, self-hosted free trial)
-1. Create a set of IAM keys for your AWS account (If you are using Okteto Self-Hosted, you can directly assign an AWS Role)
-1. Create the following Okteto secrets:
+1. Configure your Okteto instance [to use an IAM role to create AWS resources](https://www.okteto.com/docs/admin/cloud-credentials/aws-cloud-credentials/)
 
-        AWS_ACCESS_KEY_ID: The Acces Key ID of your IAM user
-        AWS_SECRET_ACCESS_KEY: The Secret Acces Key of your IAM user
-        AWS_REGION: The region in AWS you would like to use for the external resources
-
-Make sure this AWS user has permissions to create, read from, and delete the following AWS services:
+When creating the IAM Role, make sure it has permissions to create, read from, and delete the following AWS services:
 
 - SQS Queues
 - S3 Buckets
-
-> Alternatively if you are using Okteto Self-Hosted, you can configure your instance to use an AWS role instead of using an Acess Key and Secret Access Key.
 
 Once this is configured, anyone with access to your Okteto instance will be able to deploy an development environment automatically, including the required cloud infrastructure.
 

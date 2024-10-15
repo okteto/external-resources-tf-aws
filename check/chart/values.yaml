@@ -2,10 +2,8 @@ replicaCount: 1
 
 image: external-resources-aws-demo-check:latest
 bucket: 
-credentials:
-  secret:
-    name: aws-credentials
-
+region: us-west-2
+  
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
