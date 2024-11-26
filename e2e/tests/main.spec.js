@@ -8,11 +8,25 @@ test('environment variables are set', async () => {
 });
 
 
-test('has title', async ({ page }) => {
+test('menu has title', async ({ page }) => {
   await page.goto(`https://menu-${process.env.OKTETO_NAMESPACE}.${process.env.OKTETO_DOMAIN}`);
 
   // The page title
   await expect(page).toHaveTitle('The Oktaco Shop');
+});
+
+test('kitchen has title', async ({ page }) => {
+  await page.goto(`https://menu-${process.env.OKTETO_NAMESPACE}.${process.env.OKTETO_DOMAIN}`);
+
+  // The page title
+  await expect(page).toHaveTitle('The Oktaco Shop');
+});
+
+test('check has title', async ({ page }) => {
+  await page.goto(`https://check-${process.env.OKTETO_NAMESPACE}.${process.env.OKTETO_DOMAIN}`);
+
+  // The page title
+  await expect(page).toHaveTitle('The Oktaco Shop - Check');
 });
 
 

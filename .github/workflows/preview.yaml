@@ -30,6 +30,7 @@ jobs:
       uses: okteto/test@latest
       with:
         tests: e2e
+        namespace: oktaco-pr-${{ github.event.number }}
         
     - name: save result
       uses: actions/upload-artifact@v4
