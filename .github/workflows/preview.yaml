@@ -23,6 +23,9 @@ jobs:
         timeout: 15m
         scope: global
         
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
     - name: Run end to end tests
       uses: okteto/test@latest
       with:
