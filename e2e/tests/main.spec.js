@@ -9,7 +9,7 @@ test('environment variables are set', async () => {
 
 
 test('has title', async ({ page }) => {
-  await page.goto('https://menu-oktaco-pr-20.demo.okteto.dev');
+  await page.goto(`https://menu-${process.env.OKTETO_NAMESPACE}.${process.env.OKTETO_DOMAIN}`);
 
   // The page title
   await expect(page).toHaveTitle('The Oktaco Shop');
@@ -17,7 +17,7 @@ test('has title', async ({ page }) => {
 
 
 test('menu input has correct placeholder', async ({ page }) => {
-  await page.goto('https://menu-oktaco-pr-20.demo.okteto.dev');
+  await page.goto(`https://menu-${process.env.OKTETO_NAMESPACE}.${process.env.OKTETO_DOMAIN}`);
 
   const menuInput = await page.locator('input#item');
   await expect(menuInput).toBeVisible();
