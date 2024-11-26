@@ -133,7 +133,7 @@ test:
     image: $OKTETO_BUILD_E2E_IMAGE
     context: e2e
     commands:
-      - yarn install
+      # - yarn install
       - yarn test
     artifacts:
       - test-results
