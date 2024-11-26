@@ -132,6 +132,9 @@ test:
   e2e:
     image: $OKTETO_BUILD_E2E_IMAGE
     context: e2e
+    caches:
+      - yarn/.cache
+      - node_modules
     commands:
       - yarn install
       - yarn test

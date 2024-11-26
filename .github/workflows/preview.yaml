@@ -21,7 +21,6 @@ jobs:
       with:
         name: oktaco-pr-${{ github.event.number }}
         timeout: 15m
-        scope: global
         
     - name: Checkout code
       uses: actions/checkout@v4
