@@ -8,8 +8,8 @@ This is an example of how to configure and deploy a development environment that
 
 ## Run the demo application in Okteto
 
-### Prequisites:
-1. Okteto CLI 2.14 or newer
+### Prerequisites:
+1. Okteto CLI 3.0 or newer
 1. An AWS account
 1. An Okteto account ([Sign-up](https://www.okteto.com/try-free/) for 30 day, self-hosted free trial)
 1. Create a set of IAM keys for your AWS account (If you are using Okteto Self-Hosted, you can directly assign an AWS Role)
@@ -24,7 +24,7 @@ Make sure this AWS user has permissions to create, read from, and delete the fol
 - SQS Queues
 - S3 Buckets
 
-> Alternatively if you are using Okteto Self-Hosted, you can configure your instance to use an AWS role instead of using an Acess Key and Secret Access Key.
+> Alternatively if you are using Okteto Self-Hosted, you can configure your instance to use an AWS role instead of using an Access Key and Secret Access Key.
 
 Once this is configured, anyone with access to your Okteto instance will be able to deploy an development environment automatically, including the required cloud infrastructure.
 
@@ -52,6 +52,14 @@ $ okteto up kitchen
 
 ```
 $ okteto up check
+```
+
+## Run the end to end tests
+
+To run the e2d tests directly in Okteto, execute the command below.
+
+```
+$ okteto test e2e
 ```
 
 ## Notes
