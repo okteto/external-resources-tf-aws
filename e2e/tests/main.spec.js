@@ -16,10 +16,10 @@ test('menu has title', async ({ page }) => {
 });
 
 test('kitchen has title', async ({ page }) => {
-  await page.goto(`https://menu-${process.env.OKTETO_NAMESPACE}.${process.env.OKTETO_DOMAIN}`);
+  await page.goto(`https://kitchen-${process.env.OKTETO_NAMESPACE}.${process.env.OKTETO_DOMAIN}`);
 
   // The page title
-  await expect(page).toHaveTitle('The Oktaco Shop');
+  await expect(page).toHaveTitle('The Oktaco Shop - Kitchen');
 });
 
 test('check has title', async ({ page }) => {
