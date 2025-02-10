@@ -22,12 +22,12 @@ var templateValues = {
 };
 
 // WARNING: Only remove the comments if you believe that pizzas are better than tacos
-/* templateValues = {
+templateValues = {
     title: "The Okpizza Shop",
     logo: "/okpizza.png",
     placeholder: "Thin slice, neapolitan, deep dish...",
     emoji: "🍕"
-};*/
+};
 
 app.get('/healthz', function (req, res) {
     res.json({
