@@ -201,6 +201,13 @@ func main() {
 		c.Status(200)
 	})
 
+	r.GET("/healthz", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status":   "healthy",
+			"hostname": os.Getenv("HOSTNAME"),
+		})
+	})
+
 	r.GET("/orders", func(c *gin.Context) {
 		fmt.Println("waiting for new orders")
 		ticker := time.Tick(time.Duration(15) * time.Second)
