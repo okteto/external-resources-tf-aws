@@ -129,6 +129,47 @@ dev:
      RELOAD: true
 
 test:
+  menu-unit:
+    image: node:18-alpine
+    context: menu
+    caches:
+      - node_modules
+      - .npm
+    commands:
+      - npm install
+      - npm test
+    artifacts:
+      - coverage
+      - junit.xml
+
+  kitchen-unit:
+    image: golang:1.19
+    context: kitchen
+    caches:
+      - /go/pkg/mod
+      - /root/.cache/go-build
+    commands:
+      - go mod tidy
+      - go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+      - go tool cover -html=coverage.out -o coverage.html
+    artifacts:
+      - coverage.out
+      - coverage.html
+
+  check-unit:
+    image: python:3.11-alpine
+    context: check
+    caches:
+      - /root/.cache/pip
+      - __pycache__
+    commands:
+      - pip install -r requirements.txt
+      - pytest
+    artifacts:
+      - htmlcov
+      - coverage.xml
+      - .coverage
+
   e2e:
     image: $OKTETO_BUILD_E2E_IMAGE
     context: e2e

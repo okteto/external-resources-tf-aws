@@ -62,7 +62,11 @@ app.get('/', (req, res) => {
     res.render('index', templateValues);
 });
 
-// Start the server
-app.listen(port, () => {
-    console.log('ready to take your order 📝');
-});
+// Start the server only if this file is run directly
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log('ready to take your order 📝');
+    });
+}
+
+module.exports = app;

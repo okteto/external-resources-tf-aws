@@ -5,8 +5,62 @@ on:
       - main
 
 jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [menu-unit, kitchen-unit, check-unit]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Context
+      uses: okteto/context@latest
+      with:
+        url: ${{secrets.OKTETO_URL}}
+        token: ${{ secrets.OKTETO_TOKEN }}
+
+    - name: Run ${{ matrix.service }} Tests
+      uses: okteto/test@latest
+      with:
+        tests: ${{ matrix.service }}
+
+    - name: Save test artifacts for ${{ matrix.service }}
+      uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: ${{ matrix.service }}-artifacts
+        path: |
+          menu/coverage/
+          kitchen/coverage.out
+          kitchen/coverage.html
+          check/coverage.xml
+          check/htmlcov/
+        retention-days: 30
+
+  test-summary:
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    if: always()
+    steps:
+    - name: Generate Test Summary
+      run: |
+        echo "## 🧪 Unit Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        if [ "${{ needs.unit-tests.result }}" == "success" ]; then
+          echo "✅ All unit tests passed successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "- Menu Service (Node.js/Express): ✅ PASSED" >> $GITHUB_STEP_SUMMARY
+          echo "- Kitchen Service (Go/Gin): ✅ PASSED" >> $GITHUB_STEP_SUMMARY
+          echo "- Check Service (Python/FastAPI): ✅ PASSED" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Some unit tests failed. Check the logs above." >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📊 **Total Tests**: 33 tests across 3 microservices" >> $GITHUB_STEP_SUMMARY
+
   preview:
     runs-on: ubuntu-latest
+    needs: [unit-tests, test-summary]
     steps:
     - name: Context
       uses: okteto/context@latest

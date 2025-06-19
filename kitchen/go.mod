@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/aws/aws-sdk-go v1.44.229
 	github.com/gin-gonic/gin v1.9.0
+	github.com/stretchr/testify v1.8.2
 )
 
 require (
