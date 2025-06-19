@@ -62,6 +62,10 @@ async def getChecks():
 
 @app.post("/checks", status_code=200)
 async def prepare_check(check: Check):
+    # Validate that the order has items
+    if not check.items or len(check.items) == 0:
+        raise HTTPException(status_code=400, detail="Cannot submit order without any items 🚫")
+    
     # calculate price
     total = 0
     for i in range(len(check.items)):
