@@ -34,6 +34,8 @@ deploy:
       s3Dashboard="https://s3.console.aws.amazon.com/s3/buckets/${resourceName}"
       queueDashboard="https://${region}.console.aws.amazon.com/sqs/v2/home?region=${region}#/queues"
       queueUrl=$(terraform output -raw queue_url)
+      iamAccessKeyId=$(terraform output -raw iam_access_key_id)
+      iamSecretAccessKey=$(terraform output -raw iam_secret_access_key)
 
       # make the values available to the following steps and the dashboard
       {
@@ -42,12 +44,13 @@ deploy:
         echo "OKTETO_EXTERNAL_SQS_ENDPOINTS_QUEUE_URL=$queueDashboard"
         echo "SQS_QUEUE_URL=$queueUrl"
         echo "SQS_QUEUE_NAME=$resourceName"
+        echo "DEDICATED_AWS_ACCESS_KEY_ID=$iamAccessKeyId"
+        echo "DEDICATED_AWS_SECRET_ACCESS_KEY=$iamSecretAccessKey"
       } >> "$OKTETO_ENV"
   
-  # only run this command if you are not using Roles
-  - name: Create the AWS secret
+  - name: Create the AWS secret with dedicated IAM credentials
     command: |
-      kubectl create secret generic aws-credentials --save-config --dry-run=client --from-literal=AWS_REGION=$AWS_REGION --from-literal=AWS_DEFAULT_REGION=$AWS_REGION --from-literal=AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --from-literal=AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -o yaml | kubectl apply -f -
+      kubectl create secret generic aws-credentials --save-config --dry-run=client --from-literal=AWS_REGION=$AWS_REGION --from-literal=AWS_DEFAULT_REGION=$AWS_REGION --from-literal=AWS_SECRET_ACCESS_KEY=$DEDICATED_AWS_SECRET_ACCESS_KEY --from-literal=AWS_ACCESS_KEY_ID=$DEDICATED_AWS_ACCESS_KEY_ID -o yaml | kubectl apply -f -
 
   - name: Deploy the Menu microservice
     command: |
@@ -64,7 +67,7 @@ deploy:
 destroy:
   image: hashicorp/terraform:1.4
   commands:
-  - name: Delete the AWS infrastructure
+  - name: Delete the AWS infrastructure and IAM resources
     command: |
       set -e
       resourceName="${OKTETO_NAMESPACE}-oktacoshop"
@@ -73,7 +76,12 @@ destroy:
       export KUBE_CONFIG_PATH="$KUBECONFIG"
       export KUBE_NAMESPACE=$OKTETO_NAMESPACE
       terraform init -input=false
-      terraform apply -input=false -var "bucket_name=$resourceName" -var "queue_name=$resourceName" -var "region=$region" -auto-approve --destroy
+      
+      # Use terraform destroy instead of apply --destroy for better clarity
+      terraform destroy -input=false -var "bucket_name=$resourceName" -var "queue_name=$resourceName" -var "region=$region" -auto-approve
+      
+      # Clean up the Kubernetes secret as well
+      kubectl delete secret aws-credentials --ignore-not-found=true
 
 external:
   readme:
