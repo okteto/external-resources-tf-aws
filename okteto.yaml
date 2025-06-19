@@ -130,7 +130,7 @@ dev:
 
 test:
   menu-unit:
-    image: node:18-alpine
+    image: node:20-alpine
     context: menu
     caches:
       - node_modules
@@ -138,12 +138,9 @@ test:
     commands:
       - npm install
       - npm test
-    artifacts:
-      - coverage
-      - junit.xml
 
   kitchen-unit:
-    image: golang:1.19
+    image: golang:1.23
     context: kitchen
     caches:
       - /go/pkg/mod
@@ -157,7 +154,7 @@ test:
       - coverage.html
 
   check-unit:
-    image: python:3.11-alpine
+    image: python:3.10-alpine
     context: check
     caches:
       - /root/.cache/pip
@@ -165,10 +162,6 @@ test:
     commands:
       - pip install -r requirements.txt
       - pytest
-    artifacts:
-      - htmlcov
-      - coverage.xml
-      - .coverage
 
   e2e:
     image: $OKTETO_BUILD_E2E_IMAGE
