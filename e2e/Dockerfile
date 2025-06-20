@@ -1,3 +1,3 @@
-FROM mcr.microsoft.com/playwright:v1.49.0-noble
+FROM mcr.microsoft.com/playwright:v1.53.1-noble
 
 RUN corepack enable yarn
