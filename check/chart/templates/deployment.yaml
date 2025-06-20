@@ -37,6 +37,14 @@ spec:
           env:
           - name: BUCKET
             value: {{ .Values.bucket }}
+          - name: DB_HOST
+            value: {{ .Values.database.host | quote }}
+          - name: DB_NAME
+            value: {{ .Values.database.name | quote }}
+          - name: DB_USER
+            value: {{ .Values.database.user | quote }}
+          - name: DB_PASSWORD
+            value: {{ .Values.database.password | quote }}
           envFrom:
           - secretRef:
               name: {{ .Values.credentials.secret.name }}

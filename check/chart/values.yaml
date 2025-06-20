@@ -2,6 +2,11 @@ replicaCount: 1
 
 image: external-resources-aws-demo-check:latest
 bucket: 
+database:
+  host: ""
+  name: ""
+  user: ""
+  password: ""
 credentials:
   secret:
     name: aws-credentials
