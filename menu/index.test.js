@@ -107,9 +107,9 @@ describe('Menu Service', () => {
             const response = await request(app)
                 .post('/order')
                 .send({})
-                .expect(201);
+                .expect(400);
 
-            expect(mockSend).toHaveBeenCalledTimes(1);
+            expect(mockSend).toHaveBeenCalledTimes(0);
         });
     });
 
