@@ -32,35 +32,6 @@ okteto test check-unit
 okteto test e2e
 ```
 
-## Running Tests Locally
-
-### Menu Service (Node.js)
-```bash
-cd menu
-npm install
-npm test                    # Run tests
-npm run test:watch         # Run tests in watch mode
-npm run test:coverage      # Run tests with coverage
-```
-
-### Kitchen Service (Go)
-```bash
-cd kitchen
-go mod download
-go test -v ./...                                    # Run tests
-go test -v -race -coverprofile=coverage.out ./...  # Run with race detection and coverage
-go tool cover -html=coverage.out                   # View coverage report
-```
-
-### Check Service (Python)
-```bash
-cd check
-pip install -r requirements.txt
-pytest                      # Run tests
-pytest --cov=main          # Run with coverage
-pytest -v                  # Run with verbose output
-```
-
 ## Test Coverage
 
 Each service includes comprehensive test coverage:
@@ -89,22 +60,6 @@ Each service includes comprehensive test coverage:
 - ✅ Error handling for missing resources
 - ✅ Full workflow integration tests
 
-## Test Artifacts
-
-After running tests with Okteto, the following artifacts are generated:
-
-### Menu Service
-- `coverage/` - HTML coverage report
-- `junit.xml` - JUnit test results
-
-### Kitchen Service  
-- `coverage.out` - Go coverage profile
-- `coverage.html` - HTML coverage report
-
-### Check Service
-- `htmlcov/` - HTML coverage report
-- `coverage.xml` - XML coverage report
-- `.coverage` - Coverage data file
 
 ## Continuous Integration
 
@@ -117,7 +72,7 @@ The tests are designed to run in CI/CD pipelines and include:
 
 ## Test Environment
 
-Tests use mocked external dependencies:
+Unit tests use mocked external dependencies:
 
 - **AWS SQS** - Mocked for menu service order placement
 - **AWS S3** - Mocked for check service receipt storage
@@ -128,6 +83,8 @@ This ensures tests are:
 - Independent of external services
 - Suitable for CI/CD environments
 - Deterministic and repeatable
+
+The End to End test validates functionality without mocks.
 
 ## Adding New Tests
 
@@ -142,21 +99,6 @@ When adding new functionality:
 ## Troubleshooting
 
 ### Common Issues
-
-**Node.js tests failing with module errors:**
-```bash
-cd menu && npm install
-```
-
-**Go tests failing with missing dependencies:**
-```bash
-cd kitchen && go mod download
-```
-
-**Python tests failing with import errors:**
-```bash
-cd check && pip install -r requirements.txt
-```
 
 **Okteto test command not found:**
 ```bash
