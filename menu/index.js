@@ -37,6 +37,11 @@ app.get('/healthz', function (req, res) {
 });
 
 app.post('/order', function (req, res) {
+    // Validate that the order has items
+    if (!req.body.items || !Array.isArray(req.body.items) || req.body.items.length === 0) {
+        return res.status(400).json({ error: "Cannot submit order without any items 🚫" });
+    }
+
     var params = {
         MessageBody: JSON.stringify(req.body),
         QueueUrl: queue
