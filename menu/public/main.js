@@ -22,6 +22,12 @@ document.getElementById("add").addEventListener("click", function () {
 
 
 document.getElementById("placeOrder").addEventListener("click", function () {
+  // Check if there are any items in the order
+  if (!data || data.length === 0) {
+    showErrorBanner("Please add at least one item to your order before placing it! 🚫");
+    return;
+  }
+
   const payload = {"items": data};
   fetch("/order",{
     method: "post",
@@ -31,8 +37,14 @@ document.getElementById("placeOrder").addEventListener("click", function () {
       "Content-Type": "application/json"
     },
   }).then(response => {
-    if (response.status >= 200 || response.status < 500) {
+    if (response.status >= 200 && response.status < 400) {
       $("#orderPlaced").addClass("modal-open");
+    } else if (response.status === 400) {
+      response.json().then(errorData => {
+        showErrorBanner(errorData.error || "Cannot submit order without any items 🚫");
+      }).catch(() => {
+        showErrorBanner("Cannot submit order without any items 🚫");
+      });
     } else {
       console.log(`error ${response.status}`)  
     }
@@ -113,4 +125,16 @@ function addItemToDOM(text, id) {
   item.appendChild(remove);
 
   list.insertBefore(item, list.childNodes[0]);
+}
+
+// Show error banner with message
+function showErrorBanner(message) {
+  const banner = document.getElementById("errorBanner");
+  banner.textContent = message;
+  banner.classList.add("show");
+  
+  // Auto-hide after 4 seconds
+  setTimeout(() => {
+    banner.classList.remove("show");
+  }, 4000);
 }

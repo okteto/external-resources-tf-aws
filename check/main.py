@@ -339,7 +339,10 @@ async def getChecks(
 
 @app.post("/checks", status_code=200)
 async def prepare_check(check: Check, db: Session = Depends(get_db)):
-    # Calculate price
+
+    if not check.items or len(check.items) == 0:
+        raise HTTPException(status_code=400, detail="Cannot submit order without any items 🚫")
+    # Calculate price    
     total = 0
     for i in range(len(check.items)):
         item = check.items[i]
