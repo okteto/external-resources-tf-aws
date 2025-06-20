@@ -7,38 +7,118 @@
         <!--Responsive Viewport Meta tag-->
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-
-		<title>The Oktaco Shop - Check</title>
+		<title>The Oktaco Shop - Check Dashboard</title>
 
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,900&display=swap" rel="stylesheet">
 
-
 		<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌯</text></svg>">
 		
 		<!-- Stylesheets -->
 		<link rel="stylesheet" type="text/css" href="reset.min.css">
-		<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="stylesheet" type="text/css" href="dashboard.css">
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	</head>
 	<body>
 		<div class="page-container">
-
 			<img src="/logo.png" alt="The Oktaco Shop" class="logo" />
 
-			<h2>My Orders</h2>
+			<nav class="dashboard-nav">
+				<button class="nav-btn active" data-tab="overview">Overview</button>
+				<button class="nav-btn" data-tab="orders">Orders</button>
+				<button class="nav-btn" data-tab="analytics">Analytics</button>
+			</nav>
 
-			<ul class="food" id="check"></ul>
+			<!-- Overview Tab -->
+			<div id="overview-tab" class="tab-content active">
+				<h2>Dashboard Overview</h2>
+				
+				<div class="stats-grid">
+					<div class="stat-card">
+						<h3>Total Checks</h3>
+						<div class="stat-value" id="total-checks">-</div>
+					</div>
+					<div class="stat-card">
+						<h3>Total Revenue</h3>
+						<div class="stat-value" id="total-revenue">$-</div>
+					</div>
+					<div class="stat-card">
+						<h3>Avg Order Value</h3>
+						<div class="stat-value" id="avg-order-value">$-</div>
+					</div>
+					<div class="stat-card">
+						<h3>Today's Checks</h3>
+						<div class="stat-value" id="checks-today">-</div>
+					</div>
+					<div class="stat-card">
+						<h3>Today's Revenue</h3>
+						<div class="stat-value" id="revenue-today">$-</div>
+					</div>
+				</div>
 
+				<div class="charts-container">
+					<div class="chart-card">
+						<h3>Popular Items (Last 30 Days)</h3>
+						<div id="popular-items-list"></div>
+					</div>
+					<div class="chart-card">
+						<h3>Revenue Trend (Last 7 Days)</h3>
+						<canvas id="revenue-chart"></canvas>
+					</div>
+				</div>
+			</div>
+
+			<!-- Orders Tab -->
+			<div id="orders-tab" class="tab-content">
+				<h2>Order Management</h2>
+				
+				<div class="filters">
+					<select id="status-filter">
+						<option value="">All Statuses</option>
+						<option value="active">Active</option>
+						<option value="paid">Paid</option>
+						<option value="cancelled">Cancelled</option>
+					</select>
+					<button id="refresh-orders">Refresh</button>
+				</div>
+
+				<ul class="food" id="check"></ul>
+				
+				<div class="pagination">
+					<button id="prev-page" disabled>Previous</button>
+					<span id="page-info">Page 1</span>
+					<button id="next-page">Next</button>
+				</div>
+			</div>
+
+			<!-- Analytics Tab -->
+			<div id="analytics-tab" class="tab-content">
+				<h2>Analytics</h2>
+				
+				<div class="analytics-controls">
+					<label for="days-select">Time Period:</label>
+					<select id="days-select">
+						<option value="7">Last 7 days</option>
+						<option value="30" selected>Last 30 days</option>
+						<option value="90">Last 90 days</option>
+					</select>
+				</div>
+
+				<div class="charts-container">
+					<div class="chart-card full-width">
+						<h3>Daily Revenue & Order Count</h3>
+						<canvas id="analytics-chart"></canvas>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<footer class="page-footer">
 			Powered by Okteto & AWS
 
 			<img src="/okteto.svg" alt="Okteto" />
-
 		</footer>
-
 
 		<!-- JavaScripts -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

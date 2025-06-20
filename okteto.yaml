@@ -49,6 +49,24 @@ deploy:
     command: |
       kubectl create secret generic aws-credentials --save-config --dry-run=client --from-literal=AWS_REGION=$AWS_REGION --from-literal=AWS_DEFAULT_REGION=$AWS_REGION --from-literal=AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --from-literal=AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -o yaml | kubectl apply -f -
 
+  - name: Deploy PostgreSQL Database
+    command: |
+      # Add Bitnami Helm repository
+      helm repo add bitnami https://charts.bitnami.com/bitnami
+      helm repo update
+      
+      # Deploy PostgreSQL using Bitnami chart
+      helm upgrade --install postgresql bitnami/postgresql \
+        --set auth.postgresPassword=checkspass123! \
+        --set auth.username=checksuser \
+        --set auth.password=checkspass123! \
+        --set auth.database=checksdb \
+        --set primary.persistence.enabled=true \
+        --set primary.persistence.size=8Gi \
+        --set primary.resources.requests.memory=256Mi \
+        --set primary.resources.requests.cpu=250m \
+        --wait
+
   - name: Deploy the Menu microservice
     command: |
       helm upgrade --install menu menu/chart --set image=$OKTETO_BUILD_MENU_IMAGE --set queue=$SQS_QUEUE_URL --set author="${OKTETO_NAMESPACE}-${OKTETO_USERNAME}"
@@ -58,7 +76,13 @@ deploy:
 
   - name: Deploy the Check microservice
     command: |
-     helm upgrade --install check check/chart --set image=${OKTETO_BUILD_CHECK_IMAGE} --set bucket="$S3_BUCKET_NAME"
+     helm upgrade --install check check/chart \
+       --set image=${OKTETO_BUILD_CHECK_IMAGE} \
+       --set bucket="$S3_BUCKET_NAME" \
+       --set database.host="postgresql" \
+       --set database.name="checksdb" \
+       --set database.user="checksuser" \
+       --set database.password="checkspass123!"
      echo "OKTETO_EXTERNAL_API_DOCS_ENDPOINTS_DOCS_URL=https://check-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}/docs" >> $OKTETO_ENV
 
 destroy:

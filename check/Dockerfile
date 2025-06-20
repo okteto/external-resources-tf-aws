@@ -7,6 +7,7 @@ RUN pip install -r requirements.txt
 COPY public public
 COPY templates templates
 COPY main.py .
+COPY database.py .
 
 EXPOSE 8000
 
