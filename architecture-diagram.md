@@ -23,19 +23,19 @@ graph TB
                 subgraph "Menu Service"
                     MENU_POD[📱 Menu Pod<br/>Node.js + Express<br/>Port: 3000]
                     MENU_SVC[Menu Service]
-                    MENU_INGRESS[Menu Ingress<br/>menu-{namespace}.{domain}]
+                    MENU_INGRESS[Menu Ingress<br/>menu-namespace.domain]
                 end
                 
                 subgraph "Kitchen Service"
                     KITCHEN_POD[🍳 Kitchen Pod<br/>Go + Gin<br/>Port: 8000]
                     KITCHEN_SVC[Kitchen Service]
-                    KITCHEN_INGRESS[Kitchen Ingress<br/>kitchen-{namespace}.{domain}]
+                    KITCHEN_INGRESS[Kitchen Ingress<br/>kitchen-namespace.domain]
                 end
                 
                 subgraph "Check Service"
                     CHECK_POD[🧾 Check Pod<br/>Python + FastAPI<br/>Port: 8000]
                     CHECK_SVC[Check Service]
-                    CHECK_INGRESS[Check Ingress<br/>check-{namespace}.{domain}]
+                    CHECK_INGRESS[Check Ingress<br/>check-namespace.domain]
                 end
                 
                 subgraph "Testing"
@@ -50,11 +50,11 @@ graph TB
 
     subgraph "AWS Cloud Services"
         subgraph "SQS"
-            SQS_QUEUE[📬 SQS Queue<br/>{namespace}-oktacoshop]
+            SQS_QUEUE[📬 SQS Queue<br/>namespace-oktacoshop]
         end
         
         subgraph "S3"
-            S3_BUCKET[🪣 S3 Bucket<br/>{namespace}-oktacoshop<br/>Receipts Storage]
+            S3_BUCKET[🪣 S3 Bucket<br/>namespace-oktacoshop<br/>Receipts Storage]
         end
         
         subgraph "AWS Management"
