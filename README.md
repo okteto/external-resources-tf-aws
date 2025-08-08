@@ -4,7 +4,9 @@ This is an example of how to configure and deploy a development environment that
 
 ## Architecture
 
-![Architecture diagram](https://raw.githubusercontent.com/okteto/external-resources-aws/main/docs/architecture.png)
+📊 **[View Interactive Architecture Diagram](./architecture-diagram.md)**
+
+The architecture demonstrates a cloud-native development environment spanning Okteto (Kubernetes) and AWS services, featuring polyglot microservices for "The Oktaco Shop" food ordering application.
 
 ## Run the demo application in Okteto
 
