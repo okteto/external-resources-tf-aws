@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
 
-		<title>The Oktaco Shop - Check</title>
+		<title>The Oktaco Shop - Dashboard</title>
 
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,20 +20,56 @@
 		<!-- Stylesheets -->
 		<link rel="stylesheet" type="text/css" href="reset.min.css">
 		<link rel="stylesheet" type="text/css" href="style.css">
+		<!-- Chart.js for data visualization -->
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	</head>
 	<body>
 		<div class="page-container">
 
 			<img src="/logo.png" alt="The Oktaco Shop" class="logo" />
 
-			<h2>My Orders</h2>
+			<h2>Oktaco Dashboard</h2>
 
-			<ul class="food" id="check"></ul>
+			<!-- Statistics Cards -->
+			<div class="stats-container">
+				<div class="stat-card">
+					<div class="stat-number" id="total-orders">--</div>
+					<div class="stat-label">Total Orders</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-number" id="total-revenue">$--</div>
+					<div class="stat-label">Total Revenue</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-number" id="orders-today">--</div>
+					<div class="stat-label">Orders Today</div>
+				</div>
+			</div>
+
+			<!-- Charts Section -->
+			<div class="charts-container">
+				<div class="chart-section">
+					<h3>Most Popular Items</h3>
+					<canvas id="popular-items-chart"></canvas>
+				</div>
+			</div>
+
+			<!-- Recent Orders Section -->
+			<div class="recent-section">
+				<h3>Recent Orders</h3>
+				<ul class="food" id="recent-orders"></ul>
+			</div>
+
+			<!-- Current Orders Section (preserved from original) -->
+			<div class="current-section">
+				<h3>Current Orders</h3>
+				<ul class="food" id="check"></ul>
+			</div>
 
 		</div>
 
 		<footer class="page-footer">
-			Powered by Okteto & AWS
+			Powered by Okteto & PostgreSQL
 
 			<img src="/okteto.svg" alt="Okteto" />
 

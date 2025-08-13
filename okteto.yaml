@@ -17,6 +17,9 @@ build:
   e2e:
     context: e2e
 
+  postgres:
+    context: postgres
+
 deploy:
   image: hashicorp/terraform:1.4
   commands:
@@ -56,10 +59,15 @@ deploy:
   - name: Deploy the Kitchen microservice
     command: helm upgrade --install kitchen kitchen/chart --set image=$OKTETO_BUILD_KITCHEN_IMAGE --set queue=$SQS_QUEUE_NAME --set check=https://check-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}/checks
 
+  - name: Deploy PostgreSQL Database
+    command: |
+      helm upgrade --install postgres postgres/chart --wait --timeout=5m
+  
   - name: Deploy the Check microservice
     command: |
-     helm upgrade --install check check/chart --set image=${OKTETO_BUILD_CHECK_IMAGE} --set bucket="$S3_BUCKET_NAME"
+     helm upgrade --install check check/chart --set image=${OKTETO_BUILD_CHECK_IMAGE} --set bucket="$S3_BUCKET_NAME" --set database.host=postgres --set database.name=oktaco --set database.username=oktaco --set database.password=oktaco --wait
      echo "OKTETO_EXTERNAL_API_DOCS_ENDPOINTS_DOCS_URL=https://check-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}/docs" >> $OKTETO_ENV
+     echo "OKTETO_EXTERNAL_DASHBOARD_ENDPOINTS_DASHBOARD_URL=https://check-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}/" >> $OKTETO_ENV
 
 destroy:
   image: hashicorp/terraform:1.4
@@ -98,6 +106,12 @@ external:
     notes: check/notes.md
     endpoints:
     - name: docs
+  
+  dashboard:
+    icon: dashboard
+    notes: check/notes.md
+    endpoints:
+    - name: dashboard
 
 dev:
   menu:
@@ -141,3 +155,11 @@ test:
     artifacts:
       - test-results
       - playwright-report
+
+  check-unit:
+    image: $OKTETO_BUILD_CHECK_IMAGE
+    context: check
+    commands:
+      - pytest test_main.py -v --tb=short
+    artifacts:
+      - test-results

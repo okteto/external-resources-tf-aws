@@ -7,6 +7,8 @@ RUN pip install -r requirements.txt
 COPY public public
 COPY templates templates
 COPY main.py .
+COPY database.py .
+COPY item_normalizer.py .
 
 EXPOSE 8000
 

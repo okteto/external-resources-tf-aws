@@ -6,6 +6,13 @@ credentials:
   secret:
     name: aws-credentials
 
+database:
+  host: postgres
+  name: oktaco
+  username: oktaco
+  password: oktaco
+  port: 5432
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

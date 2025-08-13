@@ -37,6 +37,18 @@ spec:
           env:
           - name: BUCKET
             value: {{ .Values.bucket }}
+          - name: DATABASE_URL
+            value: "postgresql+asyncpg://{{ .Values.database.username }}:{{ .Values.database.password }}@{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}"
+          - name: DB_HOST
+            value: {{ .Values.database.host }}
+          - name: DB_NAME
+            value: {{ .Values.database.name }}
+          - name: DB_USER
+            value: {{ .Values.database.username }}
+          - name: DB_PASSWORD
+            value: {{ .Values.database.password }}
+          - name: DB_PORT
+            value: "{{ .Values.database.port }}"
           envFrom:
           - secretRef:
               name: {{ .Values.credentials.secret.name }}

@@ -1,0 +1,22 @@
+postgres:
+  image: postgres:15-alpine
+  database: oktaco
+  username: oktaco
+  password: oktaco
+  
+service:
+  type: ClusterIP
+  port: 5432
+
+persistence:
+  enabled: true
+  size: 8Gi
+  storageClass: ""
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
