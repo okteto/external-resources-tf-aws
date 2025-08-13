@@ -1,4 +1,5 @@
 var data = [];
+var popularItemsChart = null;
 
 // Remove and complete icons in SVG format
 var removeSVG = `
@@ -109,4 +110,127 @@ function addItemToDOM(checkId, total, items, url) {
   list.insertBefore(item, list.childNodes[0]);
 }
 
-window.onload = getChecks
+// Dashboard functions
+function getDashboardStats() {
+  fetch("/dashboard/stats", {
+      method: "get",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+    }).then(response => {
+      if (response.ok) {
+        response.json().then(stats => {
+          updateDashboardStats(stats);
+        });
+      } else {
+        console.log(`error fetching stats ${response.status}`);
+      }
+    }).catch(error => {
+      console.log('Dashboard stats error:', error);
+    });
+}
+
+function updateDashboardStats(stats) {
+  // Update statistics cards
+  document.getElementById("total-orders").textContent = stats.total_orders || 0;
+  document.getElementById("total-revenue").textContent = `$${(stats.total_revenue || 0).toFixed(2)}`;
+  document.getElementById("orders-today").textContent = stats.orders_today || 0;
+  
+  // Update popular items chart
+  updatePopularItemsChart(stats.popular_items || []);
+  
+  // Update recent orders list
+  updateRecentOrdersList(stats.recent_orders || []);
+}
+
+function updatePopularItemsChart(popularItems) {
+  const ctx = document.getElementById('popular-items-chart');
+  if (!ctx) return;
+  
+  const labels = popularItems.slice(0, 10).map(item => item.name || 'Unknown');
+  const data = popularItems.slice(0, 10).map(item => item.total_quantity || 0);
+  
+  if (popularItemsChart) {
+    popularItemsChart.destroy();
+  }
+  
+  popularItemsChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: [
+          '#FE38C9', '#00C4F5', '#FAFF00', '#FE38C9', '#00C4F5', 
+          '#FAFF00', '#FE38C9', '#00C4F5', '#FAFF00', '#FE38C9'
+        ],
+        borderColor: '#120924',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#00C4F5',
+            font: {
+              family: 'Roboto',
+              size: 14
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function updateRecentOrdersList(recentOrders) {
+  const list = document.getElementById("recent-orders");
+  if (!list) return;
+  
+  list.innerHTML = '';
+  
+  recentOrders.slice(0, 10).forEach(order => {
+    const item = document.createElement("li");
+    const orderDate = new Date(order.created_at).toLocaleString();
+    
+    item.innerHTML = `
+      <div>
+        <dl>
+          <dt>Order ID</dt>
+          <dd>${order.id}</dd>
+          <dt>Total</dt>
+          <dd>$${(order.total || 0).toFixed(2)}</dd>
+          <dt>Date</dt>
+          <dd>${orderDate}</dd>
+        </dl>
+      </div>
+    `;
+    
+    list.appendChild(item);
+  });
+  
+  if (recentOrders.length === 0) {
+    const noOrders = document.createElement("li");
+    noOrders.innerHTML = '<div>No recent orders</div>';
+    noOrders.style.textAlign = 'center';
+    noOrders.style.color = '#00C4F5';
+    list.appendChild(noOrders);
+  }
+}
+
+function initDashboard() {
+  getDashboardStats();
+  getChecks();
+  
+  // Refresh dashboard every 10 seconds
+  setInterval(() => {
+    getDashboardStats();
+  }, 10000);
+}
+
+window.onload = initDashboard
