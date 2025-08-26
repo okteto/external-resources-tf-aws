@@ -37,6 +37,8 @@ spec:
           env:
           - name: BUCKET
             value: {{ .Values.bucket }}
+          - name: DATABASE_URL
+            value: {{ .Values.database.url }}
           envFrom:
           - secretRef:
               name: {{ .Values.credentials.secret.name }}
