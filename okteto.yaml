@@ -56,10 +56,18 @@ deploy:
   - name: Deploy the Kitchen microservice
     command: helm upgrade --install kitchen kitchen/chart --set image=$OKTETO_BUILD_KITCHEN_IMAGE --set queue=$SQS_QUEUE_NAME --set check=https://check-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}/checks
 
+  - name: Deploy PostgreSQL database
+    command: |
+      helm repo add bitnami https://charts.bitnami.com/bitnami || true
+      helm upgrade --install postgresql bitnami/postgresql --set auth.postgresPassword=oktaco123 --set auth.database=oktacodb --set primary.persistence.size=1Gi
+      DB_HOST=postgresql.${OKTETO_NAMESPACE}.svc.cluster.local
+      echo "DATABASE_URL=postgresql://postgres:oktaco123@${DB_HOST}:5432/oktacodb" >> $OKTETO_ENV
+
   - name: Deploy the Check microservice
     command: |
-     helm upgrade --install check check/chart --set image=${OKTETO_BUILD_CHECK_IMAGE} --set bucket="$S3_BUCKET_NAME"
+     helm upgrade --install check check/chart --set image=${OKTETO_BUILD_CHECK_IMAGE} --set bucket="$S3_BUCKET_NAME" --set database.url="postgresql://postgres:oktaco123@postgresql.${OKTETO_NAMESPACE}.svc.cluster.local:5432/oktacodb"
      echo "OKTETO_EXTERNAL_API_DOCS_ENDPOINTS_DOCS_URL=https://check-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}/docs" >> $OKTETO_ENV
+     echo "OKTETO_EXTERNAL_DASHBOARD_ENDPOINTS_DASHBOARD_URL=https://check-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}/dashboard.html" >> $OKTETO_ENV
 
 destroy:
   image: hashicorp/terraform:1.4
@@ -98,6 +106,12 @@ external:
     notes: check/notes.md
     endpoints:
     - name: docs
+
+  dashboard:
+    icon: dashboard
+    notes: check/notes.md
+    endpoints:
+    - name: dashboard
 
 dev:
   menu:
@@ -141,3 +155,14 @@ test:
     artifacts:
       - test-results
       - playwright-report
+
+  check-unit:
+    image: $OKTETO_BUILD_CHECK_IMAGE
+    context: check
+    caches:
+      - /root/.cache/pip
+    commands:
+      - pip install -r requirements.txt
+      - python -m pytest test_app.py -v --tb=short
+    artifacts:
+      - .pytest_cache

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Content Type Meta tag -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!--Responsive Viewport Meta tag-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <title>The Oktaco Shop - Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,900&display=swap" rel="stylesheet">
+
+    <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌯</text></svg>">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="reset.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="dashboard.css">
+</head>
+<body>
+    <div class="page-container">
+        <img src="/logo.png" alt="The Oktaco Shop" class="logo" />
+        
+        <h2>Order Dashboard</h2>
+
+        <!-- Statistics Section -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Orders</h3>
+                <span class="stat-number" id="total-orders">-</span>
+            </div>
+            <div class="stat-card">
+                <h3>Total Revenue</h3>
+                <span class="stat-number" id="total-revenue">$-</span>
+            </div>
+            <div class="stat-card">
+                <h3>Average Order</h3>
+                <span class="stat-number" id="average-order">$-</span>
+            </div>
+        </div>
+
+        <!-- Popular Items Section -->
+        <div class="popular-items-container">
+            <h3>Most Popular Items</h3>
+            <ul class="popular-items-list" id="popular-items">
+                <!-- Popular items will be populated here -->
+            </ul>
+        </div>
+
+        <!-- Orders List Section -->
+        <div class="orders-container">
+            <h3>Recent Orders</h3>
+            <div class="pagination-controls">
+                <button class="pagination-btn" id="prev-page" onclick="previousPage()">← Previous</button>
+                <span id="page-info">Page 1</span>
+                <button class="pagination-btn" id="next-page" onclick="nextPage()">Next →</button>
+            </div>
+            
+            <div class="orders-list" id="orders-list">
+                <!-- Orders will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="page-footer">
+        Powered by Okteto & AWS
+        <img src="/okteto.svg" alt="Okteto" />
+    </footer>
+
+    <!-- JavaScripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
