@@ -7,9 +7,13 @@ You are tasked with adding a nav bar to all the microservices that allows a user
 - **Goal**: Each service displays the same navigation bar, allowing a user to click on a link to go to the other microservices
 
 ## Requirements
-1. Update each service's html to include navigation bar to all the microservices
-2. Use the existing look and feel
-3. URLs are not hardcoded, use relative links so the application is portable across Kubernetes namespaces
+1. **Design**: Rectangular navigation bar matching the page-container styling and width
+2. **Content**: Clean text links "MENU", "KITCHEN", "CHECK" (no emojis), uppercase, centered
+3. **Positioning**: Fixed at top (1em from top), ensure logo has highest z-index (200) and is never blocked
+4. **Spacing**: Increase padding to create proper clearance between nav and page content
+5. **URLs**: Use relative/dynamic URLs that work across different Kubernetes namespaces
+6. **Functionality**: Highlight current page in yellow, hover effects in pink
+7. **Consistency**: Apply identical styling and functionality to all three services
 
 ## Validation Criteria
 1. Ensure that all services display the same navigation bar
