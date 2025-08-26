@@ -10,7 +10,7 @@ from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 app = FastAPI()
@@ -24,14 +24,14 @@ checks = {}
 
 class Item(BaseModel):
     name: str
-    price: float | None = 0
-    ready: bool | None = False
+    price: Optional[float] = 0
+    ready: Optional[bool] = False
 
 class Check(BaseModel):
     orderId: str
     items: List[Item]
-    total: float | None = 0
-    url: str | None = ""
+    total: Optional[float] = 0
+    url: Optional[str] = ""
 
 
 def upload_receipt(orderId: str, receipt: str):
@@ -52,7 +52,7 @@ async def healthz():
     return {"message": "Check please 🫰!"}
 
 
-@app.get("/checks", response_model=list[Check])
+@app.get("/checks", response_model=List[Check])
 async def getChecks():
     response = []
     for checkID in checks:

@@ -1,10 +1,11 @@
-FROM golang:1.23-bookworm AS dev
+FROM golang:1.23.4-bookworm AS dev
 
 WORKDIR /usr/src/app
 RUN go install github.com/codegangsta/gin@latest && go install github.com/go-delve/delve/cmd/dlv@latest
 COPY go.mod go.sum /usr/src/app/
-RUN go mod tidy
+RUN go mod download
 COPY . . 
+RUN go mod tidy
 RUN --mount=type=cache,target=/root/.cache/go-build go build -o /usr/local/bin/kitchen
 
 FROM busybox

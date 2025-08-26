@@ -7,7 +7,7 @@
     "test": "playwright test"
   },
   "dependencies": {
-    "@playwright/test": "^1.53.1"
+    "@playwright/test": "^1.55.0"
   },
   "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
 }
