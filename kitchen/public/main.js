@@ -23,6 +23,9 @@ function removeItem() {
   })
     .then((response) => {
       if (response.status >= 200 || response.status < 500) {
+        // Remove from tracking set
+        const itemKey = `${orderId}_${value}`;
+        displayedOrderItems.delete(itemKey);
         parent.removeChild(item);
       } else {
         console.log(`error ${response.status}`);
@@ -53,6 +56,22 @@ function addItemToDOM(orderId, name) {
 }
 
 var backoff = 1;
+var displayedOrderItems = new Set(); // Track displayed order items to prevent duplicates
+
+function processOrder(order) {
+  order.items.forEach((item, index) => {
+    if (!item.ready) { // Only show items that are not ready
+      const orderId = `${order.orderId}_${index}`;
+      const itemKey = `${order.orderId}_${item.name}`;
+      
+      // Only add if we haven't already displayed this item
+      if (!displayedOrderItems.has(itemKey)) {
+        displayedOrderItems.add(itemKey);
+        addItemToDOM(orderId, item.name);
+      }
+    }
+  });
+}
 
 function getOrders() {
   fetch("/orders", {
@@ -68,12 +87,17 @@ function getOrders() {
       }
       return response.json()
     })
-    .then(data => {
+    .then(orders => {
       backoff = 1;
-      data.items.forEach((item, index) => {
-        orderId = `${data.orderId}_${index}`;
-        addItemToDOM(orderId, item.name);
-      });
+      
+      // Always expect an array of orders
+      if (Array.isArray(orders)) {
+        orders.forEach(order => {
+          processOrder(order);
+        });
+      } else {
+        console.warn("Expected array of orders, received:", orders);
+      }
     })
     .catch((error) => {
       backoff++;
