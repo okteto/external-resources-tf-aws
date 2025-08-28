@@ -5,10 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -114,7 +112,7 @@ func (p *PendingOrder) IsReady() bool {
 	return true
 }
 
-func checkForMessages(ctx context.Context, messages chan PendingOrder) {
+func checkForMessages(ctx context.Context) {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{}))
 	svc := sqs.New(sess)
 	urlResult, err := svc.GetQueueUrl(&sqs.GetQueueUrlInput{
@@ -162,10 +160,8 @@ func checkForMessages(ctx context.Context, messages chan PendingOrder) {
 
 				p := CreatePendingOrder(*m.ReceiptHandle, *m.MessageId, order)
 
-				fmt.Printf("sending order %s with %d items to the kitchen", p.OrderID, len(p.Items))
+				fmt.Printf("added order %s with %d items to pending orders", p.OrderID, len(p.Items))
 				fmt.Println()
-
-				messages <- p
 
 				_, err := svc.DeleteMessage(&sqs.DeleteMessageInput{
 					QueueUrl:      queueURL,
@@ -182,10 +178,8 @@ func checkForMessages(ctx context.Context, messages chan PendingOrder) {
 }
 
 func main() {
-	pendingMessages := make(chan PendingOrder, 1024)
-
 	ctx, cancel := context.WithCancel(context.Background())
-	go checkForMessages(ctx, pendingMessages)
+	go checkForMessages(ctx)
 
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
@@ -209,24 +203,18 @@ func main() {
 	})
 
 	r.GET("/orders", func(c *gin.Context) {
-		fmt.Println("waiting for new orders")
-		ticker := time.Tick(time.Duration(15) * time.Second)
-
-		select {
-		case <-c.Done():
-		case <-c.Request.Context().Done():
-			log.Printf("Received context cancel")
-			c.AbortWithStatus(http.StatusRequestTimeout)
-			return
-		case m := <-pendingMessages:
-			c.JSON(http.StatusOK, m)
-			fmt.Println("order sent to the kitchen")
-			return
-		case <-ticker:
-			c.AbortWithStatus(http.StatusRequestTimeout)
-			return
+		fmt.Println("kitchen frontend connected, sending pending orders")
+		
+		// Always send all existing pending orders that are not ready
+		var pendingToSend []PendingOrder
+		for _, order := range pendingOrders {
+			if !order.IsReady() {
+				pendingToSend = append(pendingToSend, order)
+			}
 		}
-
+		
+		fmt.Printf("sending %d pending orders\n", len(pendingToSend))
+		c.JSON(http.StatusOK, pendingToSend)
 	})
 
 	r.StaticFS("/public", http.Dir("public"))
