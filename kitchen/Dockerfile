@@ -4,8 +4,9 @@ WORKDIR /usr/src/app
 RUN go install github.com/codegangsta/gin@latest && go install github.com/go-delve/delve/cmd/dlv@latest
 COPY go.mod go.sum /usr/src/app/
 RUN go mod download
+COPY public public
+COPY main.go main.go
 RUN go mod tidy
-COPY public main.go /usr/src/app
 RUN --mount=type=cache,target=/root/.cache/go-build go build -o /usr/local/bin/kitchen
 
 FROM busybox
