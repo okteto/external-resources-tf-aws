@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -131,10 +131,10 @@ func checkForMessages(ctx context.Context) {
 			fmt.Println("stop receiving messages")
 			return
 		default:
-			msgResult, err := svc.ReceiveMessage(&sqs.ReceiveMessageInput{
+			msgResult, err := svc.ReceiveMessage(ctx, &sqs.ReceiveMessageInput{
 				QueueUrl:            queueURL,
-				MaxNumberOfMessages: aws.Int64(5),
-				WaitTimeSeconds:     aws.Int64(3),
+				MaxNumberOfMessages: int32(5),
+				WaitTimeSeconds:     int32(3),
 			})
 
 			if err != nil {

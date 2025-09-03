@@ -1,4 +1,4 @@
-FROM golang:1.23.4-bookworm AS dev
+FROM golang:1.25.0-bookworm AS dev
 
 WORKDIR /usr/src/app
 RUN go install github.com/codegangsta/gin@latest && go install github.com/go-delve/delve/cmd/dlv@latest

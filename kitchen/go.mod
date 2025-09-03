@@ -1,10 +1,12 @@
 module github.com/okteto/external-resources-aws-demo/kitchen
 
-go 1.23
+go 1.25
 
 require (
-	github.com/aws/aws-sdk-go v1.55.5
-	github.com/gin-gonic/gin v1.10.0
+	github.com/aws/aws-sdk-go-v2 v1.32.8
+	github.com/aws/aws-sdk-go-v2/config v1.28.8
+	github.com/aws/aws-sdk-go-v2/service/sqs v1.37.5
+	github.com/gin-gonic/gin v1.10.1
 )
 
 require (
