@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -113,28 +113,24 @@ func (p *PendingOrder) IsReady() bool {
 }
 
 func checkForMessages(ctx context.Context) {
-	sess := session.Must(session.NewSessionWithOptions(session.Options{}))
-	svc := sqs.New(sess)
-	urlResult, err := svc.GetQueueUrl(&sqs.GetQueueUrlInput{
-		QueueName: aws.String(os.Getenv("QUEUE")),
-	})
-
+	sdkConfig, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
+		fmt.Println("Couldn't load default configuration. Have you set up your AWS account?")
 		panic(err)
+
 	}
-
-	queueURL := urlResult.QueueUrl
-
+	sqsClient := sqs.NewFromConfig(sdkConfig)	
+	
 	for {
 		select {
 		case <-ctx.Done():
 			fmt.Println("stop receiving messages")
 			return
 		default:
-			msgResult, err := svc.ReceiveMessage(&sqs.ReceiveMessageInput{
-				QueueUrl:            queueURL,
-				MaxNumberOfMessages: aws.Int64(5),
-				WaitTimeSeconds:     aws.Int64(3),
+			msgResult, err := sqsClient.ReceiveMessage(ctx, &sqs.ReceiveMessageInput{
+				QueueUrl:            aws.String(os.Getenv("QUEUE")),
+				MaxNumberOfMessages: int32(5),
+				WaitTimeSeconds:     int32(3),
 			})
 
 			if err != nil {
@@ -163,8 +159,8 @@ func checkForMessages(ctx context.Context) {
 				fmt.Printf("added order %s with %d items to pending orders", p.OrderID, len(p.Items))
 				fmt.Println()
 
-				_, err := svc.DeleteMessage(&sqs.DeleteMessageInput{
-					QueueUrl:      queueURL,
+				_, err := sqsClient.DeleteMessage(ctx, &sqs.DeleteMessageInput{
+					QueueUrl:      aws.String(os.Getenv("QUEUE")),
 					ReceiptHandle: m.ReceiptHandle,
 				})
 
