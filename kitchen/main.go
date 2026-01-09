@@ -5,12 +5,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
+	sqstypes "github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	"github.com/gin-gonic/gin"
 )
 
@@ -112,15 +115,28 @@ func (p *PendingOrder) IsReady() bool {
 	return true
 }
 
-func checkForMessages(ctx context.Context) {
+func getStringAttr(attrs map[string]sqstypes.MessageAttributeValue, key string) string {
+	v, ok := attrs[key]
+	if !ok || v.StringValue == nil {
+		return ""
+	}
+	return *v.StringValue
+}
+
+func checkForMessages(ctx context.Context, consumerID string) {
 	sdkConfig, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		fmt.Println("Couldn't load default configuration. Have you set up your AWS account?")
 		panic(err)
 
 	}
-	sqsClient := sqs.NewFromConfig(sdkConfig)	
-	
+	sqsClient := sqs.NewFromConfig(sdkConfig)
+	queueUrl := aws.String(os.Getenv("QUEUE"))
+
+	if consumerID != "" {
+		log.Println("🚧 only accepting messages directed to", consumerID)
+	}
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -128,9 +144,11 @@ func checkForMessages(ctx context.Context) {
 			return
 		default:
 			msgResult, err := sqsClient.ReceiveMessage(ctx, &sqs.ReceiveMessageInput{
-				QueueUrl:            aws.String(os.Getenv("QUEUE")),
-				MaxNumberOfMessages: int32(5),
-				WaitTimeSeconds:     int32(3),
+				QueueUrl:              queueUrl,
+				MaxNumberOfMessages:   int32(5),
+				WaitTimeSeconds:       int32(20),
+				VisibilityTimeout:     int32(20), // "lock" while we decide
+				MessageAttributeNames: []string{"All"},
 			})
 
 			if err != nil {
@@ -146,6 +164,22 @@ func checkForMessages(ctx context.Context) {
 			fmt.Println()
 
 			for _, m := range msgResult.Messages {
+				owner := getStringAttr(m.MessageAttributes, "okteto-divert")
+				if owner != consumerID {
+					// Not for me: release it immediately so someone else can take it.
+					_, err := sqsClient.ChangeMessageVisibility(ctx, &sqs.ChangeMessageVisibilityInput{
+						QueueUrl:          queueUrl,
+						ReceiptHandle:     m.ReceiptHandle,
+						VisibilityTimeout: 0,
+					})
+					if err != nil {
+						log.Println("Couldn't change message visibility:", err)
+					}
+
+					// Important: add a small sleep/jitter to avoid hot-looping and re-grabbing the same message again and again.
+					time.Sleep(50 * time.Millisecond)
+					continue
+				}
 
 				var order FoodOrder
 				if err := json.Unmarshal([]byte(*m.Body), &order); err != nil {
@@ -175,7 +209,9 @@ func checkForMessages(ctx context.Context) {
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
-	go checkForMessages(ctx)
+	consumerID := os.Getenv("OKTETO_DIVERTED_ENVIRONMENT")
+
+	go checkForMessages(ctx, consumerID)
 
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
@@ -200,7 +236,7 @@ func main() {
 
 	r.GET("/orders", func(c *gin.Context) {
 		fmt.Println("kitchen frontend connected, sending pending orders")
-		
+
 		// Always send all existing pending orders that are not ready
 		var pendingToSend []PendingOrder
 		for _, order := range pendingOrders {
@@ -208,7 +244,7 @@ func main() {
 				pendingToSend = append(pendingToSend, order)
 			}
 		}
-		
+
 		fmt.Printf("sending %d pending orders\n", len(pendingToSend))
 		c.JSON(http.StatusOK, pendingToSend)
 	})

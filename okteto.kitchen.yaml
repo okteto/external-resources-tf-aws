@@ -1,0 +1,75 @@
+icon: https://raw.githubusercontent.com/okteto/icons/main/oktaco.png
+
+build:
+  kitchen:
+    context: kitchen
+
+  kitchen-dev:
+    context: kitchen
+    target: dev
+
+deploy:
+  image: hashicorp/terraform:1.4
+  divert:
+    namespace: ${OKTETO_TACOSHOP_SHARED_NAMESPACE}
+  commands:
+  - name: Create the AWS infrastructure
+    command: |
+      set -e
+      resourceName="${OKTETO_TACOSHOP_SHARED_NAMESPACE}-oktacoshop"
+      sharedEnvironmentUrl="https://$OKTETO_DOMAIN/previews/${OKTETO_TACOSHOP_SHARED_NAMESPACE}"
+      
+      # make the values available to the following steps and the dashboard
+      {
+        echo "OKTETO_EXTERNAL_SHARED_ENDPOINTS_ENVIRONMENT_URL=$sharedEnvironmentUrl"
+        echo "SQS_QUEUE_NAME=$resourceName"
+      } >> "$OKTETO_ENV"
+  
+    # only run this command if you are not using Roles
+  - name: Create the AWS secret
+    command: |
+        kubectl create secret generic aws-credentials --save-config --dry-run=client --from-literal=AWS_REGION=$AWS_REGION --from-literal=AWS_DEFAULT_REGION=$AWS_REGION --from-literal=AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --from-literal=AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -o yaml | kubectl apply -f -
+
+  - name: Deploy the Kitchen microservice
+    command: helm upgrade --install kitchen kitchen/chart --set image=$OKTETO_BUILD_KITCHEN_IMAGE --set queue=$SQS_QUEUE_NAME --set check=https://check-${OKTETO_NAMESPACE}.${OKTETO_DOMAIN}/checks
+
+external:
+  shared:
+    icon: okteto
+    endpoints:
+    - name: environment
+  readme:
+    icon: okteto
+    notes: README.md
+    endpoints:
+    - name: readme
+      url: https://github.com/okteto/external-resources-tf-aws
+
+dev:
+  kitchen:
+    image: ${OKTETO_BUILD_KITCHEN_DEV_IMAGE}
+    command: bash
+    sync:
+    - kitchen:/usr/src/app
+    environment:
+     GIN_MODE: debug
+    securityContext:
+      capabilities:
+        add:
+          - SYS_PTRACE
+    forward:
+      - 2345:2345
+  
+test:
+  e2e:
+    image: $OKTETO_BUILD_E2E_IMAGE
+    context: e2e
+    caches:
+      - yarn/.cache
+      - node_modules
+    commands:
+      - yarn install
+      - yarn test
+    artifacts:
+      - test-results
+      - playwright-report

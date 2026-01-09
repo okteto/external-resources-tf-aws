@@ -105,7 +105,7 @@ dev:
     sync:
     - menu:/usr/src/app
     forward:
-    - 9229:9229
+    - 9230:9229
   
   kitchen:
     image: ${OKTETO_BUILD_KITCHEN_DEV_IMAGE}
@@ -119,7 +119,7 @@ dev:
         add:
           - SYS_PTRACE
     forward:
-      - 2345:2345
+      - 2346:2345
   
   check:
     command: bash

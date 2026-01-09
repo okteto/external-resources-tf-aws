@@ -42,10 +42,21 @@ app.post('/order', function (req, res) {
         return res.status(400).json({ error: "Cannot submit order without any items 🚫" });
     }
 
+    const divertHeader = extractDivertKey(req, "okteto-divert");
+    
     var params = {
         MessageBody: JSON.stringify(req.body),
-        QueueUrl: queue
+        QueueUrl: queue,
     };
+
+    if (divertHeader != "") { 
+        params.MessageAttributes = {
+            "okteto-divert": {
+                DataType: "String",
+                StringValue: divertHeader, // consumer identifier
+            },
+        }
+    }
 
     sqsClient.send(new SendMessageCommand(params))
         .then(_ => {
@@ -57,6 +68,30 @@ app.post('/order', function (req, res) {
             res.sendStatus(500);
         });
 })
+
+function extractDivertKey(req, key) {
+  const baggage = req.get("baggage");
+  if (!baggage) {
+    return "";
+  }
+
+  // Split on commas that separate members
+  const members = baggage.split(",");
+
+  for (const member of members) {
+    const [k, v] = member.trim().split("=", 2);
+    if (k === key && v) {
+      // Per spec, baggage values may be URL-encoded
+      try {
+        return decodeURIComponent(v);
+      } catch {
+        return v;
+      }
+    }
+  }
+  return "";
+}
+
 // Define a route that renders the index.ejs template with a templated message
 app.get('/', (req, res) => {
     res.render('index', templateValues);
