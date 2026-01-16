@@ -15,7 +15,7 @@ body {
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 5em;
-  padding: 6em 0 0 0;
+  padding: 8em 0 0 0;
 }
 
 .logo {
@@ -34,6 +34,7 @@ body {
   margin-left: auto;
   margin-right: auto;
   max-width: 1000px;
+  min-height: 650px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -246,4 +247,39 @@ dd + dt {
 
 .download-link:hover {
   text-decoration: none;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--pink);
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 0;
+  z-index: 100;
+}
+
+.navbar a {
+  color: var(--purple);
+  text-decoration: none;
+  font-size: 1.2em;
+  font-weight: 600;
+  padding: 0 1.5em;
+  display: flex;
+  align-items: center;
+  transition: all 150ms ease;
+}
+
+.navbar a:hover {
+  background: var(--purple);
+  color: var(--pink);
+}
+
+.navbar a.active {
+  background: var(--purple);
+  color: var(--pink);
 }
