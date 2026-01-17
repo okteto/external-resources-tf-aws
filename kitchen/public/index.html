@@ -21,6 +21,11 @@
 		<link rel="stylesheet" type="text/css" href="/public/style.css">
 	</head>
 	<body>
+		<nav class="navbar">
+			<a href="#" data-service="menu">🌯 Menu</a>
+			<a href="#" data-service="kitchen" class="active">👩🏼‍🍳 Kitchen</a>
+			<a href="#" data-service="check">🧾 Check</a>
+		</nav>
 		<div class="page-container">
 
 			<img src="/public/logo.png" alt="The Oktaco Shop" class="logo" />
@@ -39,5 +44,19 @@
         <!-- JavaScripts -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="/public/main.js"></script>
+		<script>
+			// Set navbar links based on current hostname
+			const hostname = window.location.hostname;
+			const match = hostname.match(/^(menu|kitchen|check)-(.+)$/);
+			if (match) {
+				const rest = match[2];
+				document.querySelectorAll('.navbar a').forEach(link => {
+					const service = link.dataset.service;
+					if (service) {
+						link.href = `https://${service}-${rest}/`;
+					}
+				});
+			}
+		</script>
 	</body>
 </html>

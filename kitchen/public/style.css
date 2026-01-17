@@ -1,3 +1,4 @@
+/* Navigation bar styles added */
 :root {
   --pink: #FE38C9;
   --yellow: #FAFF00;
@@ -15,7 +16,9 @@ body {
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 5em;
-  padding: 6em 0 0 0;
+  padding: 8em 0 0 0;
+  height: auto;
+  min-height: 100%;
 }
 
 .logo {
@@ -34,11 +37,14 @@ body {
   margin-left: auto;
   margin-right: auto;
   max-width: 1000px;
+  min-height: 650px;
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   padding-bottom: 8em;
+  overflow: visible;
 }
 
 h2 {
@@ -221,4 +227,39 @@ h2 {
   justify-content: flex-end;
   color: rgba(255, 255, 255, 0.5);
   padding-bottom: 3em;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--pink);
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 0;
+  z-index: 100;
+}
+
+.navbar a {
+  color: var(--purple);
+  text-decoration: none;
+  font-size: 1.2em;
+  font-weight: 600;
+  padding: 0 1.5em;
+  display: flex;
+  align-items: center;
+  transition: all 150ms ease;
+}
+
+.navbar a:hover {
+  background: var(--purple);
+  color: var(--pink);
+}
+
+.navbar a.active {
+  background: var(--purple);
+  color: var(--pink);
 }
